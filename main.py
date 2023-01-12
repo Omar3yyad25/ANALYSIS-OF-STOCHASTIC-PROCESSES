@@ -34,7 +34,7 @@ def read_file():
 
 window = tk.Tk()
 window.title("Probabiblty project 2")
-window.geometry("900x700")
+window.geometry("900x750")
 
 
 fig1 = Figure(figsize=(5, 4), dpi=100)
@@ -75,6 +75,9 @@ i.place(x=10, y=480)
 j = tk.Label(window, text= "Enter j :")
 j.place(x=10, y=530)
 
+iandj = tk.Label(window, text= "value between i and j only:")
+iandj.place(x=280, y=480)
+
 taw = tk.Label(window, text= "For alpha = 1")
 taw.place(x=350, y=550)
 
@@ -96,6 +99,7 @@ entry4.place(x=60, y=530, width=100, height=25)
 
 entry5 = tk.Entry(window)
 entry5.place(x=120, y=580, width=100, height=25)
+
 
 def samples_plot():
     N = int(entry1.get())
@@ -145,7 +149,6 @@ def calc_ACF():
     matrix = []
     I = int(entry3.get())
     J= int(entry4.get())
-    print (calc_ACF_once(I-1,J-1))
     ACF_value.set(calc_ACF_once(I-1,J-1))
     matrix = [[0 for x in range(len(X[0]))] for y in range(len(X))]
     for i in range (I,J+1):
@@ -154,7 +157,6 @@ def calc_ACF():
 
     N, Y = np.meshgrid(np.arange(0, len(matrix[0])),np.arange(0, len(matrix)))
     Z=np.array(matrix)
-    print(len(Z), len(Z[0]))
     ACF_matrix = matrix
     ax3.plot_surface(N, Y, Z, cmap=cm.coolwarm,linewidth=0, antialiased=False)
     ax3.set_xlabel('X')
@@ -179,22 +181,25 @@ def calc_PSD():
     ACF_fft = np.fft.fft2(ACF_matrix)
     x_fourier_abs = np.abs(ACF_fft)
     x_fourier_abs_sqr_prob = (x_fourier_abs ** 2) * 1/len(X)
-    print(x_fourier_abs_sqr_prob)
+
     row_sum = x_fourier_abs_sqr_prob.sum(axis=1)
     c = len(X[0])
-    print(c)
     row_sum_over_time = row_sum/(x[c-1]-x[0])
 
     PSD_matrix = row_sum_over_time
 
 def plot_PSD():
     global  PSD_matrix
+    fig4.clear()
     plot_window = tk.Toplevel(window)
     ax4 = fig4.add_subplot(111)
     ax4.plot(PSD_matrix)
+    fig4.suptitle('PSD')
     canvas4 = FigureCanvasTkAgg(fig4, master=plot_window)
     canvas4.get_tk_widget().pack()
 
+
+#def calc_avg_power():
 
 button = tk.Button(window, text="Import", command=read_file)
 button.place(x=290, y=10, width=80, height=25)
@@ -220,9 +225,13 @@ button5.place(x=30, y=620, width=150, height=25)
 button6 = tk.Button(window, text="Plot PSD", command=plot_PSD)
 button6.place(x=200, y=620, width=100, height=25)
 
+button7 = tk.Button(window, text="Calculate average power", command=plot_PSD)
+button7.place(x=30, y=680, width=200, height=25)
+
 time_mean_value = tk.StringVar()
 time_ACF_value = tk.StringVar()
 ACF_value = tk.StringVar()
+average_PSD_value = tk.StringVar()
 
 time_mean_label =tk.Entry(window, textvariable=time_mean_value)
 time_mean_label.place(x= 330, y = 430)
@@ -232,6 +241,9 @@ time_ACF_label.place(x= 330, y = 580)
 
 ACF_label =tk.Entry(window, textvariable=ACF_value)
 ACF_label.place(x= 280, y = 505)
+
+average_PSD_label =tk.Entry(window, textvariable=average_PSD_value)
+average_PSD_label.place(x= 240, y = 685)
 
 
 
